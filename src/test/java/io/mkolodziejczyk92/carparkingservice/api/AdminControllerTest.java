@@ -37,8 +37,9 @@ class AdminControllerTest {
     @Test
     void whenAdminAddCarParkApplicationShouldReturnCarParkId() {
         //given
+        ParkingId expectedParkingId = ParkingId.random();
         Parking expectedParking = Parking.builder()
-                .parkingId(ParkingId.random())
+                .parkingId(expectedParkingId)
                 .parkingLocation(ParkingLocation.builder().street("Sezamkowa").plotNumber("17").build())
                 .parkingCoordinates(ParkingCoordinates.builder().latitude("30").longitude("50").build())
                 .parkingName("CornerParking")
@@ -57,7 +58,8 @@ class AdminControllerTest {
         assertThat(carParksIdDtoResponseEntity.getStatusCode().equals(HttpStatus.CREATED)).isTrue();
         assertThat(carParksIdDtoResponseEntity.getBody()).isEqualTo(expectedParking);
         assertThat(carParksIdDtoResponseEntity.getHeaders().get(HttpHeaders.LOCATION)).isNotNull();
-        assertThat(carParksIdDtoResponseEntity.getHeaders().getLocation().toString().startsWith("/parkings"));
+        assertThat(carParksIdDtoResponseEntity.getHeaders().getLocation().toString())
+                .isEqualTo("/parkings/" + expectedParkingId.rawValue());
 
     }
 

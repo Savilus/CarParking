@@ -3,10 +3,9 @@ package io.mkolodziejczyk92.carparkingservice.domain;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -27,5 +26,17 @@ public class ParkingService {
 
     public Page<Parking> getAllParking(){
         return parkingRepository.findAll(PageRequest.of(0,100));
+    }
+
+    public Parking updateParking(ParkingId parkingId, String parkingName){
+        Optional<Parking> parking = parkingRepository.findFirstByParkingIdEquals(parkingId);
+        if(parking.isPresent()){
+            Parking unpackedParking = parking.get();
+            unpackedParking.setParkingName(parkingName);
+            return parkingRepository.insert(unpackedParking);
+        }else {
+            throw new RuntimeException();
+        }
+
     }
 }

@@ -20,14 +20,20 @@ public class AdminController {
     }
 
     @PostMapping(value = "/parkings")
-    public ResponseEntity<Parking> addParking(@Valid @RequestBody CarParkingRequest request){
+    public ResponseEntity<Parking> addParking(@Valid @RequestBody CarParkingRequest request) {
         Parking parking = parkingService.createParking
                 (new ParkingCoordinates(request.getParkingLatitude(), request.getParkingLongitude()),
-                new ParkingLocation(request.getParkingStreet(), request.getParkingNumber()), request.getParkingName());
+                        new ParkingLocation(request.getParkingStreet(), request.getParkingNumber()), request.getParkingName());
         return ResponseEntity.created(URI.create("/parkings/"
                 + parking.getParkingId().rawValue())).body(parking);
     }
 
+    @PatchMapping(value = "/parkings/{parkingId}")
+    public ResponseEntity<Parking> updateParkingValues(@PathVariable String parkingId,
+                                                         @RequestParam String parkingName) {
+        ParkingId parkingId1 = new ParkingId(parkingId);
+        return ResponseEntity.ok().body(parkingService.updateParking(parkingId1, parkingName));
+    }
 
 
 }

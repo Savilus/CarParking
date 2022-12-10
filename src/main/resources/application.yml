@@ -3,3 +3,4 @@ spring:
     mongodb:
       uri: mongodb+srv://Jakub:506379951@cluster0.s11p10e.mongodb.net/?retryWrites=true&w=majority
       database: "carParkings"
+
