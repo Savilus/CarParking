@@ -1,12 +1,15 @@
 package io.mkolodziejczyk92.carparkingservice.domain;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class CarParks {
+@Builder
+public class Parking {
 
     ParkingCoordinates parkingCoordinates;
     ParkingLocation parkingLocation;
     ParkingId parkingId;
+    String parkingName;
 
 }
