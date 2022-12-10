@@ -1,11 +1,13 @@
 package io.mkolodziejczyk92.carparkingservice.api;
 
 import io.mkolodziejczyk92.carparkingservice.api.dto.CarParksIdDto;
-import io.mkolodziejczyk92.carparkingservice.domain.CarParkingRequest;
-import io.mkolodziejczyk92.carparkingservice.domain.Parking;
+import io.mkolodziejczyk92.carparkingservice.domain.*;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.mockito.internal.matchers.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,38 +23,39 @@ class AdminControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @MockBean
+    private ParkingRepository parkingRepository;
+
     private CarParkingRequest carParkingRequest = CarParkingRequest.builder()
             .parkingLatitude("30")
             .parkingLongitude("50")
-                .parkingNumber("17")
-                .parkingStreet("Sezamkowa")
-                .parkingName("CornerParking")
-                .build();
+            .parkingNumber("17")
+            .parkingStreet("Sezamkowa")
+            .parkingName("CornerParking")
+            .build();
 
     @Test
     void whenAdminAddCarParkApplicationShouldReturnCarParkId() {
         //given
-        String postCarParkUrl = "/admin/parkings";
+        Parking expectedParking = Parking.builder()
+                .parkingId(ParkingId.random())
+                .parkingLocation(ParkingLocation.builder().street("Sezamkowa").plotNumber("17").build())
+                .parkingCoordinates(ParkingCoordinates.builder().latitude("30").longitude("50").build())
+                .parkingName("CornerParking")
+                .build();
 
-        String expectedParkingName = "CornerParking";
-        String expectedStreet = "Sezamkowa";
-        String expectedNumber = "17";
-        String expectedLatitude = "30";
-        String expectedLongitude = "50";
+        Mockito.when(parkingRepository.save(Mockito.any())).thenReturn(expectedParking);
+
+        String postCarParkUrl = "/admin/parkings";
         HttpEntity<CarParkingRequest> carParkingRequestHttpEntity = new HttpEntity<>(carParkingRequest);
 
         //when
         ResponseEntity<Parking> carParksIdDtoResponseEntity =
-                restTemplate.postForEntity(postCarParkUrl, carParkingRequestHttpEntity  , Parking.class);
+                restTemplate.postForEntity(postCarParkUrl, carParkingRequestHttpEntity, Parking.class);
 
         //then
         assertThat(carParksIdDtoResponseEntity.getStatusCode().equals(HttpStatus.CREATED)).isTrue();
-        assertThat(carParksIdDtoResponseEntity.getBody()).isNotNull();
-        assertThat(carParksIdDtoResponseEntity.getBody().getParkingName()).isEqualTo(expectedParkingName);
-        assertThat(carParksIdDtoResponseEntity.getBody().getParkingLocation().street()).isEqualTo(expectedStreet);
-        assertThat(carParksIdDtoResponseEntity.getBody().getParkingLocation().plotNumber()).isEqualTo(expectedNumber);
-        assertThat(carParksIdDtoResponseEntity.getBody().getParkingCoordinates().latitude()).isEqualTo(expectedLatitude);
-        assertThat(carParksIdDtoResponseEntity.getBody().getParkingCoordinates().longitude()).isEqualTo(expectedLongitude);
+        assertThat(carParksIdDtoResponseEntity.getBody()).isEqualTo(expectedParking);
         assertThat(carParksIdDtoResponseEntity.getHeaders().get(HttpHeaders.LOCATION)).isNotNull();
         assertThat(carParksIdDtoResponseEntity.getHeaders().getLocation().toString().startsWith("/parkings"));
 
@@ -68,7 +71,7 @@ class AdminControllerTest {
 
         //when
         ResponseEntity<Parking> carParksIdDtoResponseEntity =
-                restTemplate.postForEntity(postCarParkUrl, carParkingRequestHttpEntity  , Parking.class);
+                restTemplate.postForEntity(postCarParkUrl, carParkingRequestHttpEntity, Parking.class);
 
         //then
         assertThat(carParksIdDtoResponseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)).isTrue();
