@@ -3,6 +3,7 @@ package io.mkolodziejczyk92.carparkingservice.api;
 import io.mkolodziejczyk92.carparkingservice.api.dto.CarParksIdDto;
 import io.mkolodziejczyk92.carparkingservice.domain.*;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.matchers.Any;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,19 @@ class AdminControllerTest {
         assertThat(carParksIdDtoResponseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)).isTrue();
 
 
+    }
+
+    @Test
+    void whenDeletingParkingShouldReturnNoContent(){
+        // given
+        String deleteParkingUrl = "/admin/parkings/";
+        String testID = "testId";
+        String deleteParkingEndPoint = deleteParkingUrl + testID;
+
+        // then
+        restTemplate.delete(deleteParkingEndPoint);
+        // then
+        Mockito.verify(parkingRepository).deleteByParkingIdEquals(Mockito.any());
     }
 
 }

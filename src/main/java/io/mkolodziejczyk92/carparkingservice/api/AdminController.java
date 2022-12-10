@@ -34,6 +34,12 @@ public class AdminController {
         ParkingId parkingId1 = new ParkingId(parkingId);
         return ResponseEntity.ok().body(parkingService.updateParking(parkingId1, parkingName));
     }
+    @DeleteMapping(value = "/parkings/{parkingId}")
+    public ResponseEntity<Parking> deleteParkingValues(@PathVariable String parkingId){
+        ParkingId parkingId1 = new ParkingId(parkingId);
+        parkingService.deleteParking(parkingId1);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }

@@ -1,5 +1,7 @@
 package io.mkolodziejczyk92.carparkingservice.domain;
 
+import io.mkolodziejczyk92.carparkingservice.api.dto.LocationDto;
+import io.mkolodziejczyk92.carparkingservice.domain.exceptions.ParkingNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,8 +37,15 @@ public class ParkingService {
             unpackedParking.setParkingName(parkingName);
             return parkingRepository.insert(unpackedParking);
         }else {
-            throw new RuntimeException();
+            throw new ParkingNotFoundException();
         }
+    }
 
+    public void deleteParking(ParkingId parkingId){
+        parkingRepository.deleteByParkingIdEquals(parkingId);
+    }
+
+    public Parking getLocation(ParkingId parkingId){
+        return parkingRepository.findFirstByParkingIdEquals(parkingId).orElseThrow(ParkingNotFoundException::new);
     }
 }
