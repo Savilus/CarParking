@@ -3,10 +3,7 @@ package io.mkolodziejczyk92.carparkingservice.api;
 import io.mkolodziejczyk92.carparkingservice.api.dto.CarParksIdDto;
 import io.mkolodziejczyk92.carparkingservice.domain.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -30,6 +27,7 @@ public class AdminController {
         return ResponseEntity.created(URI.create("/parkings/"
                 + parking.getParkingId().rawValue())).body(parking);
     }
+
 
 
 }
